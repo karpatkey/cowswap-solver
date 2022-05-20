@@ -1,0 +1,88 @@
+version: "3.5"
+
+services:
+
+    postgres:
+        image: postgres
+        container_name: postgres
+        environment:
+            POSTGRES_HOST_AUTH_METHOD: "trust"
+            POSTGRES_USER: dk
+            POSTGRES_PASSWORD: "dk123"
+            POSTGRES_DATABASE: dk
+        restart: unless-stopped
+        expose:
+            - 5432
+        ports:
+            - "5432:5432"
+
+    services-migration:
+        image: flyway/flyway
+        container_name: flyway
+        environment:
+            FLYWAY_PASSWORD: dk123
+            FLYWAY_USER: dk
+        volumes:
+            - $PWD/database/sql:/flyway/sql
+        #change back to 60
+        command: -url=jdbc:postgresql://postgres:5432/ -connectRetries=1 migrate -X
+        depends_on:
+            - postgres
+        
+    orderbook:
+        image: ghcr.io/cowprotocol/services
+        
+        container_name: orderbook
+        restart: unless-stopped
+        network_mode: host
+        
+        command:
+            - orderbook 
+            - -- 
+            - --db-url 
+            - "postgresql://dk:dk123@localhost:5432/dk"
+            - --skip-trace-api 
+            - "true"
+            - --base-tokens 
+            - "0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"
+            - --node-url
+            -  "https://rpc.xdaichain.com"
+        depends_on:
+            - postgres
+
+    solver:
+        image: dharmendrakariya/cowdexsolver:v1
+        container_name: solver
+        restart: unless-stopped
+        network_mode: host
+        command: cowdexsolver --bind-address 0.0.0.0:8000
+     
+    driver:
+        image: ghcr.io/cowprotocol/services
+        container_name: driver
+        restart: unless-stopped
+        network_mode: host
+        command:
+            - solver 
+            - -- 
+            - --orderbook-url 
+            - "http://0.0.0.0:8080"
+            - --base-tokens 
+            - "0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"
+            - --node-url 
+            - "https://rpc.xdaichain.com" 
+            - --cow-dex-ag-solver-url 
+            - "http://0.0.0.0:8000" 
+            - --solver-account 
+            - "0x7942a2b3540d1ec40b2740896f87aecb2a588731"
+            - --solvers 
+            - CowDexAg 
+            - --transaction-strategy 
+            - DryRun
+
+    cowswap:
+        image: dharmendrakariya/cow:v3
+        container_name: cowswap
+        restart: unless-stopped
+        network_mode: host
+
