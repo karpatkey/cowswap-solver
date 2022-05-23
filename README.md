@@ -11,6 +11,8 @@ Note: You need to configure orderbook, solver and driver!
 
 Commands:
 
+Only if you don't want to use this docker-compose.yml and run all containers separately! 
+
 
 ------------------DB Migration--------------
 
