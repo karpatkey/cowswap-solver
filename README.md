@@ -67,3 +67,10 @@ docker run --name driver -it -d --network host ghcr.io/cowprotocol/services solv
 ```
 docker run -d --name cowswap --network host -p 80:80 dharmendrakariya/cow:v3
 ```
+
+
+----------------------------NOTE-------------------------
+
+Please chack the docker-compose and comments! basically this stack has cowswap integrated! if you want just change the orderbook-url with the staging url! or may be production url! 
+
+```ex: --orderbook-url https://barn.api.cow.fi/xdai/api ```
