@@ -33,7 +33,7 @@ docker run --add-host=host.docker.internal:host-gateway -ti -e FLYWAY_URL="jdbc:
   docker run --name orderbook --network host -it -d ghcr.io/cowprotocol/services orderbook -- --db-url postgresql://dk:""@localhost:5432/dk  \
   --skip-trace-api true \
   --base-tokens 0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83 \
-  --node-url "https://rpc.xdaichain.com"
+  --node-url "https://rpc.gnosischain.com"
 
 ```
 
@@ -54,7 +54,7 @@ docker run --name solver -d --network host -p8000:8000 -ti cowdexsolver cowdexso
 docker run --name driver -it -d --network host ghcr.io/cowprotocol/services solver -- \
 --orderbook-url http://0.0.0.0:8080 \
 --base-tokens 0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83 \
---node-url "https://rpc.xdaichain.com" \
+--node-url "https://rpc.gnosischain.com" \
 --cow-dex-ag-solver-url "http://0.0.0.0:8000" \
 --solver-account 0x7942a2b3540d1ec40b2740896f87aecb2a588731 \
 --solvers CowDexAg \
